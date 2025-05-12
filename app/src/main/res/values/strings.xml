@@ -36,4 +36,27 @@
     <string name="don_t_have_an_account_sign_up_log">Don’t have an Account? Sign up</string>
     <string name="_log">Login</string>
     <string name="ttodo">TODO</string>
+    <string name="welcome_khaya_dash">Welcome, Khaya</string>
+    <string name="upcoming_bills">Upcoming Bills +</string>
+    <string name="rent_r6_700_00">Rent = R6,700.00</string>
+    <string name="groceries_r3_600_00">Groceries = R3,600.00</string>
+    <string name="r4_278_00">R4,278.00</string>
+    <string name="todo01">TODO</string>
+    <string name="todo2">TODO</string>
+    <string name="todo03">TODO</string>
+    <string name="todo04">TODO</string>
+    <string name="transport_r2_300_00">Transport = R2,300.00</string>
+    <string name="todo05">TODO</string>
+    <string name="todo06">TODO</string>
+    <string name="todo07">TODO06</string>
+    <string name="todo08">TODO</string>
+    <string name="todo09">TODO</string>
+    <string name="debt">Debt ↓</string>
+    <string name="r16_523_00">R16,523.00</string>
+    <string name="net_worth01">Net Worth ↑</string>
+    <string name="_01_mar_29_mar">01 MAR - 29 MAR</string>
+    <string name="under_budget_over_achiever">Under Budget, Over Achiever!</string>
+    <string name="todo10">TODO</string>
+    <string name="todo11">TODO</string>
+    <string name="logo">TODO</string>
 </resources>
