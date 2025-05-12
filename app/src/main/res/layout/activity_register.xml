@@ -4,6 +4,7 @@
     android:background="@android:color/white"
     android:padding="24dp">
 
+<<<<<<< HEAD
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -133,3 +134,102 @@
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>
+=======
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Register your Profile"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#000000"/>
+
+    <EditText android:id="@+id/nameLoginField"
+        android:hint="Enter First Name"
+        android:background="@drawable/rounded_edittext" android:textColor="#000000"
+        android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+    <EditText android:id="@+id/surnameLoginField"
+        android:hint="Enter Last name"
+        android:background="@drawable/rounded_edittext" android:textColor="#000000"
+        android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+    <EditText android:id="@+id/usernameLoginField"
+        android:hint="Enter Username"
+        android:background="@drawable/rounded_edittext" android:textColor="#000000"
+        android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+    <EditText android:id="@+id/emailLoginField"
+        android:hint="Enter E-mail or Username"
+        android:background="@drawable/rounded_edittext" android:textColor="#000000"
+        android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+    <EditText android:id="@+id/passwordLoginField"
+        android:hint="Enter Password" android:inputType="textPassword"
+        android:background="@drawable/rounded_edittext" android:textColor="#000000"
+        android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+
+    <RadioButton
+        android:id="@+id/characterRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:clickable="false"
+        android:minWidth="4dp"
+        android:minHeight="4dp"
+        android:layout_gravity="start"
+        android:text="8 - 12 Characters"
+        android:textColor="#FFB74D"
+        android:textAlignment="gravity"
+        android:textSize="12sp" />
+
+    <RadioButton
+        android:id="@+id/specialRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:minWidth="4dp"
+        android:minHeight="4dp"
+        android:layout_gravity="start"
+        android:text="Special Characters"
+        android:textColor="#FFB74D"
+        android:textSize="12sp" />
+
+    <RadioButton
+        android:id="@+id/numericalRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:minWidth="4dp"
+        android:minHeight="4dp"
+        android:layout_gravity="start"
+        android:nestedScrollingEnabled="false"
+        android:text="Numerical Values"
+        android:textColor="#FFB74D"
+        android:textSize="12sp" />
+
+    <EditText android:id="@+id/confirmPasswordLoginField"
+        android:hint="Confirm Password" android:inputType="textPassword"
+        android:background="@drawable/rounded_edittext" android:textColor="#000000"
+        android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+
+    <TextView android:id="@+id/forgotPasswordLink"
+        android:text="Forgot Password?" android:textColor="#FFB74D"
+        android:layout_marginTop="4dp" android:layout_gravity="end"
+        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+    <Button android:id="@+id/registerBtn" android:text="Register"
+        android:backgroundTint="#FFB74D" android:textColor="#FFFFFF"
+        android:layout_marginTop="16dp" android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+    <TextView android:id="@+id/loginRedirect"
+        android:text="Already have an Account? Sign in"
+        android:textColor="#FF9800" android:layout_marginTop="12dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+
+</LinearLayout>
+>>>>>>> 836157b16629bf88ce552c778f1b53aa9e950aeb

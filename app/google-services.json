@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "255897661885",
+    "project_id": "goodbudget-4a435",
+    "storage_bucket": "goodbudget-4a435.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255897661885:android:ffb76ed3d812654adda2d4",
+        "android_client_info": {
+          "package_name": "com.example.goodbudget"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1gjmHsrHfuxGjZQIhN_z8E-OKmXakpRw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
