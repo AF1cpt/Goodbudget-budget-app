@@ -10,42 +10,43 @@
 
     <ImageView
         android:id="@+id/bgCircle"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="134dp"
+        android:layout_height="126dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="-2dp"
         android:layout_marginTop="-2dp"
         android:scaleType="fitXY"
-        android:src="@drawable/splash_image_1" />
+        android:src="@drawable/splash_image_1"
+        android:contentDescription="@string/todo" />
 
     <ImageView
         android:id="@+id/piggyImage"
         android:layout_width="220dp"
-        android:layout_height="220dp"
+        android:layout_height="202dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
-        android:src="@drawable/splash_image_3"
-        android:contentDescription="Piggy Bank Illustration" />
+        android:contentDescription="@string/piggy_bank_illustration"
+        android:src="@drawable/splash_image_3" />
 
     <!-- Title -->
     <TextView
         android:id="@+id/splashTitle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SAVING FOR YOUR FUTURE"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:layout_height="38dp"
         android:layout_below="@id/piggyImage"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:text="@string/saving_for_your_future"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <!-- Description -->
     <TextView
         android:id="@+id/splashDesc"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis."
+        android:text="@string/goodbudget_is_more_than_a_tool_it_s_the_daily_habit_that_empowers_you_to_take_control_stay_focused_and_turn_your_financial_goals_into_lasting_achievements"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_below="@id/splashTitle"
@@ -57,7 +58,7 @@
         android:id="@+id/btnGetStarted"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="Let’s Get Started"
+        android:text="@string/let_s_get_started"
         android:layout_below="@id/splashDesc"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"

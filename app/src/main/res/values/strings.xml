@@ -23,4 +23,17 @@
     <string name="create_password">Create Password</string>
     <string name="create_new_password">Create New Password</string>
     <string name="forget_enter_e_mail_or_username_">Enter E-mail or Username</string>
+    <string name="goodbudget_is_more_than_a_tool_it_s_the_daily_habit_that_empowers_you_to_take_control_stay_focused_and_turn_your_financial_goals_into_lasting_achievements">Goodbudget is more than a tool — it’s the daily habit that empowers you to take control, stay focused, and turn your financial goals into lasting achievements.</string>
+    <string name="let_s_get_started">Let’s Get Started</string>
+    <string name="saving_for_your_future">SAVING FOR YOUR FUTURE</string>
+    <string name="piggy_bank_illustration">Piggy Bank Illustration</string>
+    <string name="todo">TODO</string>
+    <string name="login_to_your_profilea">Login to your Profile</string>
+    <string name="hi_user_welcome_back">HI User,Welcome back!.</string>
+    <string name="enter_e_mail_or_username_a">Enter E-mail or Username</string>
+    <string name="_a">Enter Password</string>
+    <string name="forgot">Forgot Password?</string>
+    <string name="don_t_have_an_account_sign_up_log">Don’t have an Account? Sign up</string>
+    <string name="_log">Login</string>
+    <string name="ttodo">TODO</string>
 </resources>
