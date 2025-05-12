@@ -22,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
 
         val loginBtn = findViewById<Button>(R.id.loginBtn)
         val forgotPasswordLink = findViewById<TextView>(R.id.forgotPasswordLink)
+        val registerRedirect = findViewById<TextView>(R.id.registerRedirect)
 
         loginBtn.setOnClickListener {
             val email = emailField.text.toString()
@@ -44,6 +45,9 @@ class LoginActivity : AppCompatActivity() {
 
         forgotPasswordLink.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
+        }
+        registerRedirect.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 }
