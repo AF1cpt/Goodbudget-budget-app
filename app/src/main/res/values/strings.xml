@@ -59,4 +59,17 @@
     <string name="todo10">TODO</string>
     <string name="todo11">TODO</string>
     <string name="logo">TODO</string>
+
+        <!-- Other string resources -->
+        <string name="welcome_user">Welcome, User!</string>
+
+        <string name="add_income">Add Income</string>
+        <string name="income_name">Income Name</string>
+        <string name="income_amount">Income Amount</string>
+        <string name="category_name">Category Name</string>
+        <string name="category_limit">Category Limit</string>
+        <string name="deduct">Deduct</string>
+        <string name="add_category">Add Category</string>
+        <string name="purchase_name">Purchase Name</string>
+        <string name="purchase_amount">Purchase Amount</string>
 </resources>

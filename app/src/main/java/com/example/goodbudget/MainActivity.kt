@@ -1,35 +1,62 @@
 package com.example.goodbudget
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.View
+import android.widget.EditText
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.example.goodbudget.databinding.ActivityMainBinding
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var categoryNameInput: EditText
+    private lateinit var categoryLimitInput: EditText
+    private lateinit var addCategoryButton: Button
+    private val db by lazy { AppDatabase.getDatabase(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        // Initialize views
+        categoryNameInput = findViewById(R.id.categoryNameInput)
+        categoryLimitInput = findViewById(R.id.categoryLimitInput)
+        addCategoryButton = findViewById(R.id.addCategoryButton)
 
-        val navView: BottomNavigationView = binding.navView
+        addCategoryButton.setOnClickListener {
+            val categoryName = categoryNameInput.text.toString()
+            val categoryLimit = categoryLimitInput.text.toString().toDoubleOrNull()
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+            // Validate inputs
+            if (categoryName.isNotEmpty() && categoryLimit != null && categoryLimit > 0) {
+                // Add the new category to the database
+                addCategoryToDatabase(categoryName, categoryLimit)
+            } else {
+                // Show an error message
+                Toast.makeText(this, "Please enter valid category details", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun addCategoryToDatabase(name: String, limit: Double) {
+        val category = Category(name = name, limit = limit)
+
+        lifecycleScope.launch {
+            // Insert the category into the database
+            db.categoryDao().insertCategory(category)
+            // Show a success message
+            runOnUiThread {
+                Toast.makeText(this@MainActivity, "Category Added!", Toast.LENGTH_SHORT).show()
+                clearInputs()
+            }
+        }
+    }
+
+    private fun clearInputs() {
+        // Clear the input fields after adding the category
+        categoryNameInput.text.clear()
+        categoryLimitInput.text.clear()
     }
 }

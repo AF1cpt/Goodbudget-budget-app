@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,9 +5,11 @@
     android:background="@android:color/white"
     android:fillViewport="true">
 
-    <RelativeLayout
+    <!-- Wrap everything inside a LinearLayout to make it the direct child of the ScrollView -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <!-- Top Left Background Decorative -->
         <ImageView
@@ -111,68 +112,5 @@
                 android:textColor="#444444"
                 android:textSize="14sp" />
         </LinearLayout>
-    </RelativeLayout>
+    </LinearLayout>
 </ScrollView>
-=======
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/login_to_your_profile"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/emailLoginField"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_edittext"
-        android:hint="@string/enter_e_mail_or_username"
-        android:textColor="#000000"/>
-
-    <EditText
-        android:id="@+id/passwordLoginField"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_edittext"
-        android:hint="@string/enter_password"
-        android:inputType="textPassword"
-        android:textColor="#000000"/>
-
-    <TextView
-        android:id="@+id/forgotPasswordLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="4dp"
-        android:text="@string/forgot_password"
-        android:textColor="#FFB74D" />
-
-    <Button
-        android:id="@+id/loginBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="#FFB74D"
-        android:text="@string/login"
-        android:textColor="#FFFFFF" />
-
-    <TextView
-        android:id="@+id/registerRedirect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Don't have an account? Register here."
-        android:textColor="#FFB74D"
-        android:textSize="14sp"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center" />
-</LinearLayout>
->>>>>>> 836157b16629bf88ce552c778f1b53aa9e950aeb
