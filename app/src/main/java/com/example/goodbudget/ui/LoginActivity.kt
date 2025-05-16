@@ -50,5 +50,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
             return
         }
+    }
+}
 
 // TODO: Replace with actual user validation logic (RoomDB, Firebase, etc

@@ -22,21 +22,29 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var radioSpec: RadioButton
     private lateinit var radioNum: RadioButton
 
+    private lateinit var registerBtn: Button
+    private lateinit var loginRedirect: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        nameField = findViewById(R.id.nameLoginField)
-        surnameField = findViewById(R.id.surnameLoginField)
-        usernameField = findViewById(R.id.usernameLoginField)
-        emailField = findViewById(R.id.emailLoginField)
-        passwordField = findViewById(R.id.passwordLoginField)
-        confirmPasswordField = findViewById(R.id.confirmPasswordLoginField)
+        // Bind UI elements
+        nameField = findViewById(R.id.nameInput)
+        surnameField = findViewById(R.id.surnameInput)
+        usernameField = findViewById(R.id.usernameInput)
+        emailField = findViewById(R.id.emailInput)
+        passwordField = findViewById(R.id.passwordInput)
+        confirmPasswordField = findViewById(R.id.confirmPasswordInput)
 
         radioChar = findViewById(R.id.characterRadioButton)
         radioSpec = findViewById(R.id.specialRadioButton)
         radioNum = findViewById(R.id.numericalRadioButton)
 
+        registerBtn = findViewById(R.id.btnRegister)
+        loginRedirect = findViewById(R.id.signInText)
+
+        // Password validation indicators
         passwordField.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val text = s.toString()
@@ -49,7 +57,8 @@ class RegisterActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        findViewById<Button>(R.id.registerBtn).setOnClickListener {
+        // Register button logic
+        registerBtn.setOnClickListener {
             val pass = passwordField.text.toString()
             val confirm = confirmPasswordField.text.toString()
 
@@ -80,7 +89,8 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<TextView>(R.id.loginRedirect).setOnClickListener {
+        // Redirect to Login
+        loginRedirect.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         }
     }

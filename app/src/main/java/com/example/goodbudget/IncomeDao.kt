@@ -8,5 +8,5 @@ interface IncomeDao {
     suspend fun insertIncome(income: Income)
 
     @Query("SELECT SUM(amount) FROM income")
-    suspend fun getTotalIncome(): Double
+    suspend fun getTotalIncome(): Double?
 }

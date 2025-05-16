@@ -1,206 +1,195 @@
-<android.widget.ScrollView
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:paddingTop="?attr/actionBarSize"
-    android:fillViewport="true">
+    tools:context=".MainActivity"
+    android:background="@android:color/white">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Scrollable content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingBottom="96dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Greeting -->
+            <TextView
+                android:id="@+id/greetingText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Welcome, User!"
+                android:textColor="#000000"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:paddingBottom="12dp" />
+
+            <!-- Total Balance Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/totalBalanceCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Total Balance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFB74D"
+                        android:textStyle="bold"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/totalBalanceAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="R12,300.00"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Category Input -->
+            <EditText
+                android:id="@+id/categoryNameInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Category Name"
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
+                android:textColorHint="#666666"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/categoryLimitInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Category Limit"
+                android:inputType="numberDecimal"
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
+                android:textColorHint="#666666"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/addCategoryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Category"
+                android:backgroundTint="#FFB74D"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Income Input -->
+            <EditText
+                android:id="@+id/incomeNameInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Income Name"
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
+                android:textColorHint="#666666"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/incomeAmountInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Income Amount"
+                android:inputType="numberDecimal"
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
+                android:textColorHint="#666666"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/addIncomeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Income"
+                android:backgroundTint="#FFB74D"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Purchase Inputs -->
+            <EditText
+                android:id="@+id/purchaseNameInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Purchase Name"
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
+                android:textColorHint="#666666"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/purchaseAmountInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Purchase Amount"
+                android:inputType="numberDecimal"
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
+                android:textColorHint="#666666"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/purchaseCategoryNameInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Category Name"
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
+                android:textColorHint="#666666"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Deduct Button -->
+            <Button
+                android:id="@+id/spendIncomeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Deduct"
+                android:backgroundTint="#FFB74D"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="32dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation View (DO NOT MODIFY COLOR SETTINGS) -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="?attr/actionBarSize">
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/purple_200"
+        app:itemTextColor="@color/black" />
 
-        <!-- Header for Greeting -->
-        <TextView
-            android:id="@+id/greetingText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Welcome, User!"
-            android:textColor="#000000"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-
-        <!-- Total Balance Section -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/totalBalanceCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/greetingText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="Total Balance"
-                    android:textColor="#FFB74D"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/totalBalanceAmount"
-                    android:text="R12,300.00"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:textColor="#000000"
-                    android:layout_marginTop="8dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Category Name -->
-        <EditText
-            android:id="@+id/categoryNameInput"
-            android:layout_width="match_parent"
-            android:layout_height="69dp"
-            android:layout_marginBottom="8dp"
-            android:autofillHints=""
-            android:background="@android:drawable/edit_text"
-            android:hint="Category Name"
-            android:padding="12dp"
-            app:layout_constraintTop_toBottomOf="@id/totalBalanceCard"/>
-
-        <!-- Category Limit -->
-        <EditText
-            android:id="@+id/categoryLimitInput"
-            android:layout_width="match_parent"
-            android:layout_height="73dp"
-            android:layout_marginBottom="4dp"
-            android:autofillHints="Password"
-            android:background="@android:drawable/edit_text"
-            android:hint="Category Limit"
-            android:inputType="numberDecimal"
-            android:padding="12dp"
-            app:layout_constraintTop_toBottomOf="@+id/categoryNameInput"/>
-
-        <!-- Button to Add Category -->
-        <Button
-            android:id="@+id/addCategoryButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Category"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#FFB74D"
-            android:textColor="#FFFFFF"
-            app:layout_constraintTop_toBottomOf="@+id/categoryLimitInput"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- Income Name -->
-        <EditText
-            android:id="@+id/incomeNameInput"
-            android:layout_width="match_parent"
-            android:layout_height="69dp"
-            android:layout_marginBottom="8dp"
-            android:autofillHints=""
-            android:background="@android:drawable/edit_text"
-            android:hint="Income Name"
-            android:padding="12dp"
-            app:layout_constraintTop_toBottomOf="@+id/addCategoryButton"/>
-
-        <!-- Income Amount -->
-        <EditText
-            android:id="@+id/incomeAmountInput"
-            android:layout_width="match_parent"
-            android:layout_height="73dp"
-            android:layout_marginBottom="4dp"
-            android:autofillHints="Password"
-            android:background="@android:drawable/edit_text"
-            android:hint="Income Amount"
-            android:inputType="numberDecimal"
-            android:padding="12dp"
-            app:layout_constraintTop_toBottomOf="@+id/incomeNameInput"/>
-
-        <!-- Button to Add Income -->
-        <Button
-            android:id="@+id/addIncomeButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Income"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#FFB74D"
-            android:textColor="#FFFFFF"
-            app:layout_constraintTop_toBottomOf="@+id/incomeAmountInput"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- Purchase Name -->
-        <EditText
-            android:id="@+id/purchaseNameInput"
-            android:layout_width="match_parent"
-            android:layout_height="69dp"
-            android:layout_marginBottom="8dp"
-            android:autofillHints=""
-            android:background="@android:drawable/edit_text"
-            android:hint="Purchase Name"
-            android:padding="12dp"
-            app:layout_constraintTop_toBottomOf="@+id/addIncomeButton"/>
-
-        <!-- Purchase Amount -->
-        <EditText
-            android:id="@+id/purchaseAmountInput"
-            android:layout_width="match_parent"
-            android:layout_height="73dp"
-            android:layout_marginBottom="4dp"
-            android:autofillHints="Password"
-            android:background="@android:drawable/edit_text"
-            android:hint="Purchase Amount"
-            android:inputType="numberDecimal"
-            android:padding="12dp"
-            app:layout_constraintTop_toBottomOf="@+id/purchaseNameInput"/>
-
-        <!-- Purchase Category Name -->
-        <EditText
-            android:id="@+id/purchaseCategoryNameInput"
-            android:layout_width="match_parent"
-            android:layout_height="69dp"
-            android:layout_marginBottom="8dp"
-            android:autofillHints=""
-            android:background="@android:drawable/edit_text"
-            android:hint="Category Name"
-            android:padding="12dp"
-            app:layout_constraintTop_toBottomOf="@+id/purchaseAmountInput"/>
-
-        <!-- Button to Deduct -->
-        <Button
-            android:id="@+id/spendIncomeButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Deduct"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#FFB74D"
-            android:textColor="#FFFFFF"
-            app:layout_constraintTop_toBottomOf="@+id/purchaseCategoryNameInput"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- Bottom Navigation View -->
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/nav_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            app:itemIconTint="#FFBB86FC"
-            app:itemTextColor="#FF000000"
-            app:menu="@menu/bottom_nav_menu"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</android.widget.ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

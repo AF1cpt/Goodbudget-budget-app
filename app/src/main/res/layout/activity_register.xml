@@ -50,66 +50,114 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <!-- Form Fields -->
+            <!-- First Name -->
             <EditText
+                android:id="@+id/nameInput"
                 android:hint="Enter First Name"
+                android:textColorHint="#666666"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
                 android:padding="12dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
+            <!-- Last Name -->
             <EditText
+                android:id="@+id/surnameInput"
                 android:hint="Enter Last Name"
+                android:textColorHint="#666666"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
                 android:padding="12dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
+            <!-- Username -->
             <EditText
+                android:id="@+id/usernameInput"
                 android:hint="Create Username"
+                android:textColorHint="#666666"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
                 android:padding="12dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
+            <!-- Email -->
             <EditText
+                android:id="@+id/emailInput"
                 android:hint="Enter E-mail"
+                android:textColorHint="#666666"
                 android:inputType="textEmailAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
                 android:padding="12dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
+            <!-- Password -->
             <EditText
+                android:id="@+id/passwordInput"
                 android:hint="Create Password"
+                android:textColorHint="#666666"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
                 android:padding="12dp"
-                android:layout_marginBottom="4dp"/>
+                android:layout_marginBottom="4dp" />
 
-            <!-- Password guidelines -->
-            <TextView
-                android:text="• 8 – 12 Characters\n• Special Characters\n• Numerical Values"
-                android:textColor="#888888"
-                android:textSize="13sp"
+
+            <!-- Password Strength Indicators -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginBottom="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:paddingHorizontal="8dp">
 
+                <RadioButton
+                    android:id="@+id/characterRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="8–12 Characters"
+                    android:enabled="false"
+                    android:textColor="#666666"/>
+
+                <RadioButton
+                    android:id="@+id/specialRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Special Character"
+                    android:enabled="false"
+                    android:textColor="#666666"/>
+
+                <RadioButton
+                    android:id="@+id/numericalRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="At least 1 Number"
+                    android:enabled="false"
+                    android:textColor="#666666"/>
+            </LinearLayout>
+
+            <!-- Confirm Password -->
             <EditText
+                android:id="@+id/confirmPasswordInput"
                 android:hint="Re-enter Password"
+                android:textColorHint="#666666"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/edit_text"
+                android:textColor="#000000"
                 android:padding="12dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp" />
 
             <!-- Register Button -->
             <Button

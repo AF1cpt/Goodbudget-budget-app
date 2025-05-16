@@ -1,6 +1,7 @@
 package com.example.goodbudget
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.*
@@ -17,16 +18,21 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        emailField = findViewById(R.id.emailLoginField)
-        passwordField = findViewById(R.id.passwordLoginField)
+        emailField = findViewById(R.id.emailInput)
+        passwordField = findViewById(R.id.passwordInput)
 
-        val loginBtn = findViewById<Button>(R.id.loginBtn)
-        val forgotPasswordLink = findViewById<TextView>(R.id.forgotPasswordLink)
+        val loginButton = findViewById<Button>(R.id.btnLogin)
+        val forgotPasswordLink = findViewById<TextView>(R.id.forgotPassword)
         val registerRedirect = findViewById<TextView>(R.id.registerRedirect)
 
-        loginBtn.setOnClickListener {
-            val email = emailField.text.toString()
-            val password = passwordField.text.toString()
+        loginButton.setOnClickListener {
+            val email = emailField.text.toString().trim()
+            val password = passwordField.text.toString().trim()
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val db = AppDatabase.getDatabase(applicationContext)
             val userDao = db.userDao()
@@ -34,10 +40,16 @@ class LoginActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 val user = userDao.login(email, password)
                 if (user != null) {
+
+                    val sharedPref = getSharedPreferences("USER_PREF", MODE_PRIVATE)
+                    sharedPref.edit().putString("email", user.email).apply()
+
+
                     startActivity(Intent(this@LoginActivity, DashboardActivity::class.java))
+                    finish()
                 } else {
-                    emailField.setBackgroundColor(Color.RED)
-                    passwordField.setBackgroundColor(Color.RED)
+                    emailField.setBackgroundColor(Color.parseColor("#FFCDD2"))
+                    passwordField.setBackgroundColor(Color.parseColor("#FFCDD2"))
                     Toast.makeText(this@LoginActivity, "Invalid credentials", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -46,6 +58,7 @@ class LoginActivity : AppCompatActivity() {
         forgotPasswordLink.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }
+
         registerRedirect.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }

@@ -4,6 +4,11 @@ plugins {
     id("kotlin-kapt")
 
 }
+repositories {
+    google()
+    mavenCentral()
+    maven(url = "https://jitpack.io")
+}
 
 android {
     namespace = "com.example.goodbudget"

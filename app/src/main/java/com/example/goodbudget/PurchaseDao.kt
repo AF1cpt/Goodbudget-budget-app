@@ -8,5 +8,8 @@ interface PurchaseDao {
     suspend fun insertPurchase(purchase: Purchase)
 
     @Query("SELECT SUM(amount) FROM purchases")
-    suspend fun getTotalDebt(): Double
+    suspend fun getTotalDebt(): Double?
+
+    @Query("SELECT * FROM purchases")
+    suspend fun getAllPurchases(): List<Purchase>
 }

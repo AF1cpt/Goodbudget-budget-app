@@ -1,222 +1,164 @@
-<android.widget.ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/container"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dashboardRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:fillViewport="true"
-    android:paddingTop="?attr/actionBarSize">
+    tools:context=".DashboardActivity">
 
-    <RelativeLayout
+    <ScrollView
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingBottom="72dp">
 
-        <!-- Top Decorative Background -->
-        <ImageView
-            android:id="@+id/bgTopLeft"
-            android:layout_width="256dp"
-            android:layout_height="256dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/bg_circle_updated"
-            android:scaleType="fitXY"
-            android:contentDescription="@string/todo11" />
-
-        <ImageView
-            android:id="@+id/bgTopRight"
-            android:layout_width="256dp"
-            android:layout_height="256dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/bg_circle_updated"
-            android:scaleType="fitXY"
-            android:contentDescription="@string/todo10" />
-
-        <!-- Content Inside ScrollView -->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_below="@id/bgTopLeft"
-            android:padding="24dp">
+            android:layout_height="wrap_content">
 
-            <!-- Greeting Text with User's Name -->
-            <TextView
-                android:id="@+id/greetingTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:text="Welcome, [User Name]"
-                android:textColor="@android:color/black"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+            <!-- Decorative Background -->
+            <ImageView
+                android:id="@+id/bgTopLeft"
+                android:layout_width="256dp"
+                android:layout_height="256dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/bg_circle_updated"
+                android:scaleType="fitXY"
+                android:contentDescription="@string/todo11" />
 
             <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="55dp"
-                android:layout_height="57dp"
-                android:src="@drawable/fluent_emoji_flat_trophy" />
+                android:id="@+id/bgTopRight"
+                android:layout_width="256dp"
+                android:layout_height="256dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/bg_circle_updated"
+                android:scaleType="fitXY"
+                android:contentDescription="@string/todo10" />
 
-            <TextView
-                android:id="@+id/achievementTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Under Budget, Over Achiever!"
-                android:textColor="#FFB74D"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/dateRangeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="01 MAR - 29 MAR"
-                android:textSize="14sp" />
-
-            <!-- Net Worth + Debt Information -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/netWorthDebtCardView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
-            </androidx.cardview.widget.CardView>
-
-            <!-- Spending Categories with Progress Bars -->
             <LinearLayout
-                android:id="@+id/spendingCategoriesLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:orientation="vertical">
+                android:layout_below="@id/bgTopLeft"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-                <!-- Rent Category -->
+                <!-- Greeting -->
+                <TextView
+                    android:id="@+id/greetingTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Welcome, [User Name]"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="55dp"
+                    android:layout_height="57dp"
+                    android:layout_marginBottom="4dp"
+                    android:src="@drawable/fluent_emoji_flat_trophy" />
+
+                <TextView
+                    android:id="@+id/achievementTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:text="Under Budget, Over Achiever!"
+                    android:textColor="#FFB74D"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/dateRangeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="01 MAR - 29 MAR"
+                    android:textSize="14sp" />
+
+                <!-- Dynamic Spending Categories -->
+                <LinearLayout
+                    android:id="@+id/spendingCategoriesLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
+
+                <!-- Net Worth and Spent Overview -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:weightSum="2">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="Rent"
-                        android:textSize="12sp" />
-
-                    <ProgressBar
-                        android:id="@+id/rentProgressBar"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:indeterminate="false"
-                        android:max="12000"
-                        android:progress="2500" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="R2500 / R12000"
-                        android:textSize="12sp" />
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Net Worth"
+                            android:textColor="#666666"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
-                <!-- Groceries Category -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/netWorthTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="R0.00"
+                            android:textColor="#FFB74D"
+                            android:textSize="20sp" />
+                    </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="Groceries"
-                        android:textSize="12sp" />
-
-                    <ProgressBar
-                        android:id="@+id/groceriesProgressBar"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:indeterminate="false"
-                        android:max="5000"
-                        android:progress="1200" />
+                        android:gravity="end"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="R1200 / R5000"
-                        android:textSize="12sp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Spent"
+                            android:textColor="#666666"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/debtTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="R0.00"
+                            android:textColor="#FFB74D"
+                            android:textSize="20sp" />
+                    </LinearLayout>
                 </LinearLayout>
-
-                <!-- Additional Categories (Transport, Luxuries, etc.) can follow the same structure -->
             </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
 
-            <LinearLayout
-                android:layout_width="374dp"
-                android:layout_height="124dp"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:weightSum="2">
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/purple_200"
+        app:itemTextColor="@color/black" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Net Worth"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/netWorthTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="R16,523.00"
-                        android:textColor="#FFB74D"
-                        android:textSize="20sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Spent"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/debtTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="R4,278.00"
-                        android:textColor="#FFB74D"
-                        android:textSize="20sp" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </RelativeLayout>
-
-</android.widget.ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
