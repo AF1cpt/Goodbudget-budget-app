@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class Category(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,  // Auto-generate unique IDs
     val name: String,
-    val limit: Double
+    val limit: Double,
+    val userEmail: String
 )

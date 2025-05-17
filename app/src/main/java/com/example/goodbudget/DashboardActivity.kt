@@ -51,25 +51,35 @@ class DashboardActivity : BaseActivity() {
     }
 
     private fun fetchCategoriesAndDisplay() {
-        lifecycleScope.launch {
-            val categories = db.categoryDao().getAllCategories()
-            val allPurchases = db.purchaseDao().getAllPurchases()
+        val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
 
-            runOnUiThread {
-                spendingCategoriesLayout.removeAllViews()
-                for (category in categories) {
-                    val totalSpent = allPurchases
-                        .filter { it.category.equals(category.name, ignoreCase = true) }
-                        .sumOf { it.amount }
+        if (userEmail != null) {
+            lifecycleScope.launch {
+                val categories = db.categoryDao().getCategoriesByUser(userEmail)
+                val purchases = db.purchaseDao().getPurchasesByUser(userEmail)
 
-                    val categoryView = createCategoryView(category.name, totalSpent, category.limit)
-                    spendingCategoriesLayout.addView(categoryView)
+                runOnUiThread {
+                    spendingCategoriesLayout.removeAllViews()
+                    for (category in categories) {
+                        val totalSpent = purchases
+                            .filter { it.category.equals(category.name, ignoreCase = true) }
+                            .sumOf { it.amount }
+
+                        val categoryView =
+                            createCategoryView(category.name, totalSpent, category.limit)
+                        spendingCategoriesLayout.addView(categoryView)
+                    }
                 }
             }
         }
     }
 
-    private fun createCategoryView(categoryName: String, spent: Double, limit: Double): LinearLayout {
+
+    private fun createCategoryView(
+        categoryName: String,
+        spent: Double,
+        limit: Double
+    ): LinearLayout {
         val context = this
 
         val layout = LinearLayout(context).apply {
@@ -94,11 +104,13 @@ class DashboardActivity : BaseActivity() {
             )
         }
 
-        val progressBar = ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal).apply {
-            max = limit.toInt()
-            progress = spent.coerceAtMost(limit).toInt()
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 2f)
-        }
+        val progressBar =
+            ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal).apply {
+                max = limit.toInt()
+                progress = spent.coerceAtMost(limit).toInt()
+                layoutParams =
+                    LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 2f)
+            }
 
         val spentTextView = TextView(context).apply {
             text = "R${"%.2f".format(spent)} / R${"%.2f".format(limit)}"
@@ -120,16 +132,20 @@ class DashboardActivity : BaseActivity() {
     }
 
     private fun fetchIncomeAndPurchases() {
-        lifecycleScope.launch {
-            val totalIncome = db.incomeDao().getTotalIncome() ?: 0.0
-            val totalDebt = db.purchaseDao().getTotalDebt() ?: 0.0
-            val totalBalance = totalIncome - totalDebt
+        val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
 
-            runOnUiThread {
-                netWorthTextView.text = "R${"%.2f".format(totalIncome)}"
-                debtTextView.text = "R${"%.2f".format(totalDebt)}"
-                val balanceTextView = findViewById<TextView>(R.id.totalBalanceAmount)
-                balanceTextView?.text = "R${"%.2f".format(totalBalance)}"
+        if (userEmail != null) {
+            lifecycleScope.launch {
+                val totalIncome = db.incomeDao().getTotalIncomeByUser(userEmail) ?: 0.0
+                val totalDebt = db.purchaseDao().getTotalDebtByUser(userEmail) ?: 0.0
+                val totalBalance = totalIncome - totalDebt
+
+                runOnUiThread {
+                    netWorthTextView.text = "R${"%.2f".format(totalIncome)}"
+                    debtTextView.text = "R${"%.2f".format(totalDebt)}"
+                    val balanceTextView = findViewById<TextView>(R.id.totalBalanceAmount)
+                    balanceTextView?.text = "R${"%.2f".format(totalBalance)}"
+                }
             }
         }
     }

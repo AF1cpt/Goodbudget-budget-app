@@ -3,7 +3,6 @@ package com.example.goodbudget
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -13,7 +12,6 @@ class MainActivity : BaseActivity() {
     private lateinit var categoryNameInput: EditText
     private lateinit var categoryLimitInput: EditText
     private lateinit var addCategoryButton: Button
-    private lateinit var totalBalanceAmount: TextView
 
     private val db by lazy { AppDatabase.getDatabase(this) }
 
@@ -22,11 +20,10 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
         setupBottomNavigation(MainActivity::class.java)
 
-        // Category input views
+        // Category Views
         categoryNameInput = findViewById(R.id.categoryNameInput)
         categoryLimitInput = findViewById(R.id.categoryLimitInput)
         addCategoryButton = findViewById(R.id.addCategoryButton)
-        totalBalanceAmount = findViewById(R.id.totalBalanceAmount)
 
         addCategoryButton.setOnClickListener {
             val categoryName = categoryNameInput.text.toString()
@@ -39,7 +36,7 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        // Income input
+        // Income Views
         val incomeNameInput = findViewById<EditText>(R.id.incomeNameInput)
         val incomeAmountInput = findViewById<EditText>(R.id.incomeAmountInput)
         val addIncomeButton = findViewById<Button>(R.id.addIncomeButton)
@@ -50,14 +47,14 @@ class MainActivity : BaseActivity() {
             val incomeAmount = amountText.toDoubleOrNull()
 
             if (incomeAmount != null && incomeAmount > 0) {
-                val income = Income(amount = incomeAmount)
+                val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
+                val income = Income(amount = incomeAmount, userEmail = userEmail ?: "")
                 lifecycleScope.launch {
                     db.incomeDao().insertIncome(income)
                     runOnUiThread {
                         Toast.makeText(this@MainActivity, "Income added successfully!", Toast.LENGTH_SHORT).show()
                         incomeNameInput.text.clear()
                         incomeAmountInput.text.clear()
-                        fetchAndDisplayBalance()
                     }
                 }
             } else {
@@ -65,7 +62,7 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        // Purchase input
+        // Purchase Views
         val purchaseNameInput = findViewById<EditText>(R.id.purchaseNameInput)
         val purchaseAmountInput = findViewById<EditText>(R.id.purchaseAmountInput)
         val purchaseCategoryInput = findViewById<EditText>(R.id.purchaseCategoryNameInput)
@@ -78,20 +75,20 @@ class MainActivity : BaseActivity() {
             val purchaseAmount = amountText.toDoubleOrNull()
 
             if (purchaseAmount != null && purchaseAmount > 0 && categoryText.isNotEmpty()) {
+                val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
                 lifecycleScope.launch {
-                    val totalIncome = db.incomeDao().getTotalIncome() ?: 0.0
-                    val totalDebt = db.purchaseDao().getTotalDebt() ?: 0.0
+                    val totalIncome = db.incomeDao().getTotalIncomeByUser(userEmail ?: "") ?: 0.0
+                    val totalDebt = db.purchaseDao().getTotalDebtByUser(userEmail ?: "") ?: 0.0
                     val availableBalance = totalIncome - totalDebt
 
                     if (purchaseAmount <= availableBalance) {
-                        val purchase = Purchase(amount = purchaseAmount, category = categoryText)
+                        val purchase = Purchase(amount = purchaseAmount, category = categoryText, userEmail = userEmail ?: "")
                         db.purchaseDao().insertPurchase(purchase)
                         runOnUiThread {
                             Toast.makeText(this@MainActivity, "Purchase deducted successfully!", Toast.LENGTH_SHORT).show()
                             purchaseNameInput.text.clear()
                             purchaseAmountInput.text.clear()
                             purchaseCategoryInput.text.clear()
-                            fetchAndDisplayBalance()
                         }
                     } else {
                         runOnUiThread {
@@ -103,13 +100,11 @@ class MainActivity : BaseActivity() {
                 Toast.makeText(this, "Please enter valid purchase details", Toast.LENGTH_SHORT).show()
             }
         }
-
-        // Load current balance
-        fetchAndDisplayBalance()
     }
 
     private fun addCategoryToDatabase(name: String, limit: Double) {
-        val category = Category(name = name, limit = limit)
+        val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
+        val category = Category(name = name, limit = limit, userEmail = userEmail ?: "")
 
         lifecycleScope.launch {
             db.categoryDao().insertCategory(category)
@@ -123,17 +118,5 @@ class MainActivity : BaseActivity() {
     private fun clearInputs() {
         categoryNameInput.text.clear()
         categoryLimitInput.text.clear()
-    }
-
-    private fun fetchAndDisplayBalance() {
-        lifecycleScope.launch {
-            val totalIncome = db.incomeDao().getTotalIncome() ?: 0.0
-            val totalDebt = db.purchaseDao().getTotalDebt() ?: 0.0
-            val balance = totalIncome - totalDebt
-
-            runOnUiThread {
-                totalBalanceAmount.text = "R${"%.2f".format(balance)}"
-            }
-        }
     }
 }

@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class Purchase(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val amount: Double,
-    val category: String
+    val category: String,
+    val userEmail: String
 )
