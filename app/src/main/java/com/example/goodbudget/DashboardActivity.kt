@@ -6,8 +6,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import com.example.goodbudget.gamification.GamificationEngine
-import com.example.goodbudget.gamification.models.UserStats
+import kotlin.math.absoluteValue
+import com.google.android.material.progressindicator.CircularProgressIndicator
 
 class DashboardActivity : BaseActivity() {
 
@@ -21,23 +21,6 @@ class DashboardActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
         setupBottomNavigation(DashboardActivity::class.java)
-
-        val xpProgressBar = findViewById<ProgressBar>(R.id.xpProgressBar)
-        val levelTextView = findViewById<TextView>(R.id.levelTextView)
-        val streakTextView = findViewById<TextView>(R.id.streakTextView)
-
-        val stats: UserStats = GamificationEngine.getUserStats()
-
-// Display level
-        levelTextView.text = "Level: ${stats.level}"
-
-// Display XP
-        xpProgressBar.max = stats.requiredXp
-        xpProgressBar.progress = stats.currentXp
-
-// Display streak
-        streakTextView.text = "Daily Streak: ${stats.dailyStreak} days"
-
 
         // Initialize views
         greetingTextView = findViewById(R.id.greetingTextView)
@@ -66,6 +49,25 @@ class DashboardActivity : BaseActivity() {
             }
         } else {
             greetingTextView.text = "Welcome, User"
+        }
+    }
+
+    private fun fetchIncomeAndPurchases() {
+        val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
+
+        if (userEmail != null) {
+            lifecycleScope.launch {
+                val totalIncome = db.incomeDao().getTotalIncomeByUser(userEmail) ?: 0.0
+                val totalDebt = db.purchaseDao().getTotalDebtByUser(userEmail) ?: 0.0
+                val totalBalance = totalIncome - totalDebt
+
+                runOnUiThread {
+                    netWorthTextView.text = "R${"%.2f".format(totalIncome)}"
+                    debtTextView.text = "R${"%.2f".format(totalDebt)}"
+                    val balanceTextView = findViewById<TextView>(R.id.totalBalanceAmount)
+                    balanceTextView?.text = "R${"%.2f".format(totalBalance)}"
+                }
+            }
         }
     }
 
@@ -107,7 +109,7 @@ class DashboardActivity : BaseActivity() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                setMargins(0, 0, 0, 16)
+                setMargins(0, 0, 0, 24)
             }
             setPadding(8, 8, 8, 8)
         }
@@ -123,13 +125,27 @@ class DashboardActivity : BaseActivity() {
             )
         }
 
-        val progressBar =
-            ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal).apply {
-                max = limit.toInt()
-                progress = spent.coerceAtMost(limit).toInt()
-                layoutParams =
-                    LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 2f)
+        val percentage = ((spent / limit) * 100).toInt().coerceAtMost(100)
+
+        val progressIndicator = CircularProgressIndicator(context).apply {
+            isIndeterminate = false
+            trackThickness = 12
+            setProgressCompat(percentage, true)
+            layoutParams = LinearLayout.LayoutParams(100, 100).apply {
+                setMargins(16, 0, 16, 0)
             }
+
+            // Color selection logic
+            val colors = listOf(
+                android.graphics.Color.RED,
+                android.graphics.Color.MAGENTA,
+                android.graphics.Color.BLUE,
+                android.graphics.Color.GREEN,
+                android.graphics.Color.rgb(255, 165, 0) // Orange
+            )
+            val colorIndex = (categoryName.hashCode().absoluteValue) % colors.size
+            setIndicatorColor(colors[colorIndex])
+        }
 
         val spentTextView = TextView(context).apply {
             text = "R${"%.2f".format(spent)} / R${"%.2f".format(limit)}"
@@ -138,34 +154,16 @@ class DashboardActivity : BaseActivity() {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(16, 0, 0, 0)
-            }
+            )
         }
 
         layout.addView(nameTextView)
-        layout.addView(progressBar)
+        layout.addView(progressIndicator)
         layout.addView(spentTextView)
 
         return layout
     }
 
-    private fun fetchIncomeAndPurchases() {
-        val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
 
-        if (userEmail != null) {
-            lifecycleScope.launch {
-                val totalIncome = db.incomeDao().getTotalIncomeByUser(userEmail) ?: 0.0
-                val totalDebt = db.purchaseDao().getTotalDebtByUser(userEmail) ?: 0.0
-                val totalBalance = totalIncome - totalDebt
 
-                runOnUiThread {
-                    netWorthTextView.text = "R${"%.2f".format(totalIncome)}"
-                    debtTextView.text = "R${"%.2f".format(totalDebt)}"
-                    val balanceTextView = findViewById<TextView>(R.id.totalBalanceAmount)
-                    balanceTextView?.text = "R${"%.2f".format(totalBalance)}"
-                }
-            }
-        }
-    }
 }

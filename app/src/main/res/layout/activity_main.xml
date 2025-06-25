@@ -148,16 +148,15 @@
                 android:textColorHint="#666666"
                 android:layout_marginBottom="12dp" />
 
-            <EditText
-                android:id="@+id/purchaseCategoryNameInput"
+
+            <Spinner
+                android:id="@+id/purchaseCategoryNameSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Category Name"
+                android:layout_marginBottom="12dp"
                 android:padding="12dp"
                 android:background="@android:drawable/edit_text"
-                android:textColor="#000000"
-                android:textColorHint="#666666"
-                android:layout_marginBottom="12dp" />
+                android:spinnerMode="dropdown" />
 
             <EditText
                 android:id="@+id/purchaseDateInput"
@@ -169,6 +168,23 @@
                 android:textColor="#000000"
                 android:textColorHint="#666666"
                 android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/selectReceiptButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Upload Receipt (Optional)"
+                android:backgroundTint="#CCCCCC"
+                android:textColor="#000000"
+                android:layout_marginBottom="8dp" />
+
+            <ImageView
+                android:id="@+id/receiptImagePreview"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:layout_marginBottom="12dp"/>
 
             <!-- Deduct Button -->
             <Button

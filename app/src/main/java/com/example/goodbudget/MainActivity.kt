@@ -1,10 +1,10 @@
 package com.example.goodbudget
 
+import android.net.Uri
 import android.os.Bundle
-import android.widget.EditText
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
@@ -13,8 +13,20 @@ class MainActivity : BaseActivity() {
     private lateinit var categoryNameInput: EditText
     private lateinit var categoryLimitInput: EditText
     private lateinit var addCategoryButton: Button
+    private lateinit var receiptImagePreview: ImageView
+    private lateinit var selectReceiptButton: Button
+    private lateinit var purchaseCategorySpinner: Spinner
+    private var selectedImageUri: Uri? = null
 
     private val db by lazy { AppDatabase.getDatabase(this) }
+
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        if (uri != null) {
+            selectedImageUri = uri
+            receiptImagePreview.setImageURI(uri)
+            receiptImagePreview.visibility = View.VISIBLE
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,19 +79,33 @@ class MainActivity : BaseActivity() {
         // Purchase Views
         val purchaseNameInput = findViewById<EditText>(R.id.purchaseNameInput)
         val purchaseAmountInput = findViewById<EditText>(R.id.purchaseAmountInput)
-        val purchaseCategoryInput = findViewById<EditText>(R.id.purchaseCategoryNameInput)
+       purchaseCategorySpinner = findViewById(R.id.purchaseCategoryNameSpinner)
         val purchaseDateInput = findViewById<EditText>(R.id.purchaseDateInput)
+        receiptImagePreview = findViewById(R.id.receiptImagePreview)
+        selectReceiptButton = findViewById(R.id.selectReceiptButton)
         val spendIncomeButton = findViewById<Button>(R.id.spendIncomeButton)
+
+        selectReceiptButton.setOnClickListener {
+            imagePickerLauncher.launch("image/*")
+        }
 
         spendIncomeButton.setOnClickListener {
             val purchaseName = purchaseNameInput.text.toString().trim()
             val amountText = purchaseAmountInput.text.toString().trim()
-            val categoryText = purchaseCategoryInput.text.toString().trim()
-            val purchaseDate = purchaseDateInput.text.toString().trim() // yyyy-mm-dd format
+            val selectedCategoryIndex = purchaseCategorySpinner.selectedItemPosition
+            val categoryText = purchaseCategorySpinner.selectedItem?.toString()?.trim() ?: ""
+            val purchaseDate = purchaseDateInput.text.toString().trim()
             val purchaseAmount = amountText.toDoubleOrNull()
 
-            if (purchaseAmount != null && purchaseAmount > 0 && categoryText.isNotEmpty() &&
-                purchaseName.isNotEmpty() && purchaseDate.matches(Regex("""\d{4}-\d{2}-\d{2}"""))
+            if (selectedCategoryIndex == 0 || categoryText == "Select a Category") {
+                Toast.makeText(this, "Please select a valid category", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (purchaseAmount != null && purchaseAmount > 0 &&
+                categoryText.isNotEmpty() &&
+                purchaseName.isNotEmpty() &&
+                purchaseDate.matches(Regex("""\d{4}-\d{2}-\d{2}"""))
             ) {
                 val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null) ?: ""
 
@@ -94,15 +120,18 @@ class MainActivity : BaseActivity() {
                             amount = purchaseAmount,
                             category = categoryText,
                             date = purchaseDate,
-                            userEmail = userEmail
+                            userEmail = userEmail,
+                            receiptImageUri = selectedImageUri?.toString()
                         )
                         db.purchaseDao().insertPurchase(purchase)
                         runOnUiThread {
                             Toast.makeText(this@MainActivity, "Purchase deducted successfully!", Toast.LENGTH_SHORT).show()
                             purchaseNameInput.text.clear()
                             purchaseAmountInput.text.clear()
-                            purchaseCategoryInput.text.clear()
                             purchaseDateInput.text.clear()
+                            receiptImagePreview.setImageDrawable(null)
+                            receiptImagePreview.visibility = View.GONE
+                            selectedImageUri = null
                             fetchBalance()
                         }
                     } else {
@@ -117,6 +146,7 @@ class MainActivity : BaseActivity() {
         }
 
         fetchBalance()
+        populateCategorySpinner()
     }
 
     private fun fetchBalance() {
@@ -145,6 +175,7 @@ class MainActivity : BaseActivity() {
             runOnUiThread {
                 Toast.makeText(this@MainActivity, "Category Added!", Toast.LENGTH_SHORT).show()
                 clearInputs()
+                populateCategorySpinner()
             }
         }
     }
@@ -152,5 +183,42 @@ class MainActivity : BaseActivity() {
     private fun clearInputs() {
         categoryNameInput.text.clear()
         categoryLimitInput.text.clear()
+    }
+
+    private fun populateCategorySpinner() {
+        val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
+
+        if (userEmail != null) {
+            lifecycleScope.launch {
+                val categories = db.categoryDao().getCategoriesByUser(userEmail)
+
+                runOnUiThread {
+                    if (categories.isEmpty()) {
+                        Toast.makeText(this@MainActivity, "No categories yet. Add one first.", Toast.LENGTH_SHORT).show()
+                        val defaultList = listOf("Select a Category")
+                        val defaultAdapter = ArrayAdapter(
+                            this@MainActivity,
+                            android.R.layout.simple_spinner_item,
+                            defaultList
+                        ).apply {
+                            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        }
+                        purchaseCategorySpinner.adapter = defaultAdapter
+                    } else {
+                        val categoryNames = mutableListOf("Select a Category")
+                        categoryNames.addAll(categories.map { it.name })
+
+                        val adapter = ArrayAdapter(
+                            this@MainActivity,
+                            R.layout.spinner_item,
+                            categoryNames
+                        ).apply {
+                            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        }
+                        purchaseCategorySpinner.adapter = adapter
+                    }
+                }
+            }
+        }
     }
 }

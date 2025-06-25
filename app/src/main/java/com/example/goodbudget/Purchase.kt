@@ -11,5 +11,6 @@ data class Purchase(
     val amount: Double,
     val category: String,
     val date: String, // Store as "yyyy-MM-dd" or just "yyyy-MM"
-    val userEmail: String
+    val userEmail: String,
+    val receiptImageUri: String? = null
 )
