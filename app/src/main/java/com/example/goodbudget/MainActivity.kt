@@ -3,9 +3,13 @@ package com.example.goodbudget
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import com.example.goodbudget.gamification.GamificationEngine
+import com.example.goodbudget.gamification.GamificationStorage
 
 class MainActivity : BaseActivity() {
 
@@ -17,7 +21,12 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        GamificationEngine.initialize(applicationContext)
         setContentView(R.layout.activity_main)
+
+        // Initialize gamification
+        GamificationStorage.init(applicationContext)
+
         setupBottomNavigation(MainActivity::class.java)
 
         // Category Views
@@ -37,12 +46,10 @@ class MainActivity : BaseActivity() {
         }
 
         // Income Views
-        val incomeNameInput = findViewById<EditText>(R.id.incomeNameInput)
         val incomeAmountInput = findViewById<EditText>(R.id.incomeAmountInput)
         val addIncomeButton = findViewById<Button>(R.id.addIncomeButton)
 
         addIncomeButton.setOnClickListener {
-            val incomeName = incomeNameInput.text.toString()
             val amountText = incomeAmountInput.text.toString()
             val incomeAmount = amountText.toDoubleOrNull()
 
@@ -53,7 +60,6 @@ class MainActivity : BaseActivity() {
                     db.incomeDao().insertIncome(income)
                     runOnUiThread {
                         Toast.makeText(this@MainActivity, "Income added successfully!", Toast.LENGTH_SHORT).show()
-                        incomeNameInput.text.clear()
                         incomeAmountInput.text.clear()
                     }
                 }
@@ -63,13 +69,11 @@ class MainActivity : BaseActivity() {
         }
 
         // Purchase Views
-        val purchaseNameInput = findViewById<EditText>(R.id.purchaseNameInput)
         val purchaseAmountInput = findViewById<EditText>(R.id.purchaseAmountInput)
         val purchaseCategoryInput = findViewById<EditText>(R.id.purchaseCategoryNameInput)
         val spendIncomeButton = findViewById<Button>(R.id.spendIncomeButton)
 
         spendIncomeButton.setOnClickListener {
-            val purchaseName = purchaseNameInput.text.toString()
             val amountText = purchaseAmountInput.text.toString()
             val categoryText = purchaseCategoryInput.text.toString()
             val purchaseAmount = amountText.toDoubleOrNull()
@@ -86,7 +90,6 @@ class MainActivity : BaseActivity() {
                         db.purchaseDao().insertPurchase(purchase)
                         runOnUiThread {
                             Toast.makeText(this@MainActivity, "Purchase deducted successfully!", Toast.LENGTH_SHORT).show()
-                            purchaseNameInput.text.clear()
                             purchaseAmountInput.text.clear()
                             purchaseCategoryInput.text.clear()
                         }
@@ -108,9 +111,17 @@ class MainActivity : BaseActivity() {
 
         lifecycleScope.launch {
             db.categoryDao().insertCategory(category)
+
+            // Award XP for adding a category
+            val result = GamificationEngine.awardXp(30) // 30 XP
+
             runOnUiThread {
                 Toast.makeText(this@MainActivity, "Category Added!", Toast.LENGTH_SHORT).show()
                 clearInputs()
+
+                if (result.leveledUp) {
+                    showLevelUpDialog(result.newLevel)
+                }
             }
         }
     }
@@ -118,5 +129,22 @@ class MainActivity : BaseActivity() {
     private fun clearInputs() {
         categoryNameInput.text.clear()
         categoryLimitInput.text.clear()
+    }
+
+    private fun showLevelUpDialog(newLevel: Int) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_celebration, null)
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        val messageView = dialogView.findViewById<TextView>(R.id.dialogMessage)
+        val levelView = dialogView.findViewById<TextView>(R.id.dialogLevel)
+        val imageView = dialogView.findViewById<ImageView>(R.id.dialogImage)
+
+        messageView?.text = "🎉 Level Up!"
+        levelView?.text = "You reached Level $newLevel"
+        imageView?.setImageResource(R.drawable.fluent_emoji_flat_trophy)
+
+        dialog.show()
     }
 }

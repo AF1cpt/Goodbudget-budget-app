@@ -6,6 +6,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import com.example.goodbudget.gamification.GamificationEngine
+import com.example.goodbudget.gamification.models.UserStats
 
 class DashboardActivity : BaseActivity() {
 
@@ -19,6 +21,23 @@ class DashboardActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
         setupBottomNavigation(DashboardActivity::class.java)
+
+        val xpProgressBar = findViewById<ProgressBar>(R.id.xpProgressBar)
+        val levelTextView = findViewById<TextView>(R.id.levelTextView)
+        val streakTextView = findViewById<TextView>(R.id.streakTextView)
+
+        val stats: UserStats = GamificationEngine.getUserStats()
+
+// Display level
+        levelTextView.text = "Level: ${stats.level}"
+
+// Display XP
+        xpProgressBar.max = stats.requiredXp
+        xpProgressBar.progress = stats.currentXp
+
+// Display streak
+        streakTextView.text = "Daily Streak: ${stats.dailyStreak} days"
+
 
         // Initialize views
         greetingTextView = findViewById(R.id.greetingTextView)
