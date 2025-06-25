@@ -139,6 +139,45 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/xpContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:gravity="center_vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/xpLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Your Points: "
+                        android:textSize="14sp"
+                        android:textColor="@android:color/darker_gray"
+                        />
+
+                    <ProgressBar
+                        android:id="@+id/xpProgressBar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:progress="0"
+                        android:max="100"
+                        android:progressTint="@color/purple_500" />
+
+                    <TextView
+                        android:id="@+id/xpText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0/100 XP"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:paddingStart="8dp"
+                        />
+                </LinearLayout>
+
                 <!-- Dynamic Spending Categories -->
                 <LinearLayout
                     android:id="@+id/spendingCategoriesLayout"
@@ -147,7 +186,26 @@
                     android:layout_marginTop="12dp"
                     android:orientation="vertical" />
 
+                <TextView
+                    android:id="@+id/streakTextView"
+                    android:layout_width="184dp"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Daily Streak: 3 Days"
+                    android:textColor="#4CAF50"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/levelTextView"
+                    android:layout_width="183dp"
+                    android:layout_height="36dp"
+                    android:text="Level: 1"
+                    android:textColor="#3F51B5"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
             </LinearLayout>
+
+
         </RelativeLayout>
     </ScrollView>
 

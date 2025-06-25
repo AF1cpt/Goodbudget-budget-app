@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.example.goodbudget.gamification.GamificationEngine
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.example.goodbudget.gamification.models.UserStats
 
 class DashboardActivity : BaseActivity() {
 
@@ -15,6 +18,9 @@ class DashboardActivity : BaseActivity() {
     private lateinit var spendingCategoriesLayout: LinearLayout
     private lateinit var netWorthTextView: TextView
     private lateinit var debtTextView: TextView
+    private lateinit var xpText: TextView
+    private lateinit var xpProgressBar: ProgressBar
+    private lateinit var levelTextView: TextView
     private val db by lazy { AppDatabase.getDatabase(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,19 +28,46 @@ class DashboardActivity : BaseActivity() {
         setContentView(R.layout.activity_dashboard)
         setupBottomNavigation(DashboardActivity::class.java)
 
-        // Initialize views
+        // Initialize UI elements
+        xpText = findViewById(R.id.xpText)
+        xpProgressBar = findViewById(R.id.xpProgressBar)
+        levelTextView = findViewById(R.id.levelTextView)
         greetingTextView = findViewById(R.id.greetingTextView)
         spendingCategoriesLayout = findViewById(R.id.spendingCategoriesLayout)
         netWorthTextView = findViewById(R.id.netWorthTextView)
         debtTextView = findViewById(R.id.debtTextView)
 
-        // Fetch user data to display their name
+        // Initial load
+        refreshGamificationUI()
         fetchUserData()
-        // Fetch and display categories
         fetchCategoriesAndDisplay()
-        // Fetch and update total balance and debt
         fetchIncomeAndPurchases()
     }
+
+    override fun onResume() {
+        super.onResume()
+        refreshGamificationUI() // 🔁 Refresh XP and level when returning to dashboard
+    }
+
+    private fun refreshGamificationUI() {
+        val stats: UserStats = GamificationEngine.getUserStats()
+
+        // Update level text
+        levelTextView.text = "Level: ${stats.level}"
+
+        // Update progress bar max and progress
+        xpProgressBar.max = stats.requiredXp
+        xpProgressBar.progress = stats.currentXp
+
+        // Update the XP text (e.g., "45 / 100 XP")
+        xpText.text = "${stats.currentXp} / ${stats.requiredXp} XP"
+
+        // Show toast for each unlocked badge
+        for (badge in stats.badgesUnlocked) {
+            Toast.makeText(this, "🏅 Badge Unlocked: $badge", Toast.LENGTH_LONG).show()
+        }
+    }
+
 
     private fun fetchUserData() {
         val sharedPref = getSharedPreferences("USER_PREF", MODE_PRIVATE)
@@ -94,7 +127,6 @@ class DashboardActivity : BaseActivity() {
             }
         }
     }
-
 
     private fun createCategoryView(
         categoryName: String,
@@ -163,7 +195,4 @@ class DashboardActivity : BaseActivity() {
 
         return layout
     }
-
-
-
 }

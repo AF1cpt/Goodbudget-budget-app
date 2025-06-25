@@ -1,12 +1,18 @@
 package com.example.goodbudget
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
+import com.example.goodbudget.gamification.BadgeManager
 import kotlinx.coroutines.launch
+import com.example.goodbudget.gamification.GamificationEngine
+import com.example.goodbudget.gamification.GamificationStorage
 
 class MainActivity : BaseActivity() {
 
@@ -20,9 +26,16 @@ class MainActivity : BaseActivity() {
 
     private val db by lazy { AppDatabase.getDatabase(this) }
 
-    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+    val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
             selectedImageUri = uri
+
+            // 🔐 Persist permission so you can load the image later
+            contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+
             receiptImagePreview.setImageURI(uri)
             receiptImagePreview.visibility = View.VISIBLE
         }
@@ -30,7 +43,12 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        GamificationEngine.initialize(applicationContext)
         setContentView(R.layout.activity_main)
+
+        // Initialize gamification
+        GamificationStorage.init(applicationContext)
+
         setupBottomNavigation(MainActivity::class.java)
 
         // Category Views
@@ -64,11 +82,25 @@ class MainActivity : BaseActivity() {
                 val income = Income(amount = incomeAmount, userEmail = userEmail ?: "")
                 lifecycleScope.launch {
                     db.incomeDao().insertIncome(income)
+
+                    // 🟢 Award XP for income
+                    val result = GamificationEngine.awardXp(20) // 20 XP
+                    val userStats = GamificationEngine.getUserStats()
+                    val newBadges = BadgeManager.unlockBadges(userStats, db, userEmail ?: "")
+
                     runOnUiThread {
                         Toast.makeText(this@MainActivity, "Income added successfully!", Toast.LENGTH_SHORT).show()
                         incomeNameInput.text.clear()
                         incomeAmountInput.text.clear()
                         fetchBalance()
+
+                        for (badge in newBadges) {
+                            Toast.makeText(this@MainActivity, "\uD83C\uDFC5 Badge Unlocked: ${badge.title}!", Toast.LENGTH_LONG).show()
+                        }
+
+                        if (result.leveledUp) {
+                            showLevelUpDialog(result.newLevel)
+                        }
                     }
                 }
             } else {
@@ -79,7 +111,7 @@ class MainActivity : BaseActivity() {
         // Purchase Views
         val purchaseNameInput = findViewById<EditText>(R.id.purchaseNameInput)
         val purchaseAmountInput = findViewById<EditText>(R.id.purchaseAmountInput)
-       purchaseCategorySpinner = findViewById(R.id.purchaseCategoryNameSpinner)
+        purchaseCategorySpinner = findViewById(R.id.purchaseCategoryNameSpinner)
         val purchaseDateInput = findViewById<EditText>(R.id.purchaseDateInput)
         receiptImagePreview = findViewById(R.id.receiptImagePreview)
         selectReceiptButton = findViewById(R.id.selectReceiptButton)
@@ -124,6 +156,16 @@ class MainActivity : BaseActivity() {
                             receiptImageUri = selectedImageUri?.toString()
                         )
                         db.purchaseDao().insertPurchase(purchase)
+
+                        // 🟢 Award XP for purchase
+                        val xpResult = GamificationEngine.awardXp(10) // 10 XP
+                        if (selectedImageUri != null) {
+                            GamificationEngine.incrementReceiptCount()
+                        }
+
+                        val updatedStats = GamificationEngine.getUserStats()
+                        val newBadges = BadgeManager.unlockBadges(updatedStats, db, userEmail)
+
                         runOnUiThread {
                             Toast.makeText(this@MainActivity, "Purchase deducted successfully!", Toast.LENGTH_SHORT).show()
                             purchaseNameInput.text.clear()
@@ -133,6 +175,14 @@ class MainActivity : BaseActivity() {
                             receiptImagePreview.visibility = View.GONE
                             selectedImageUri = null
                             fetchBalance()
+
+                            for (badge in newBadges) {
+                                Toast.makeText(this@MainActivity, "\uD83C\uDFC5 Badge Unlocked: ${badge.title}!", Toast.LENGTH_LONG).show()
+                            }
+
+                            if (xpResult.leveledUp) {
+                                showLevelUpDialog(xpResult.newLevel)
+                            }
                         }
                     } else {
                         runOnUiThread {
@@ -172,10 +222,18 @@ class MainActivity : BaseActivity() {
 
         lifecycleScope.launch {
             db.categoryDao().insertCategory(category)
+
+            // Award XP for adding a category
+            val result = GamificationEngine.awardXp(30) // 30 XP
+
             runOnUiThread {
                 Toast.makeText(this@MainActivity, "Category Added!", Toast.LENGTH_SHORT).show()
                 clearInputs()
                 populateCategorySpinner()
+
+                if (result.leveledUp) {
+                    showLevelUpDialog(result.newLevel)
+                }
             }
         }
     }
@@ -183,6 +241,23 @@ class MainActivity : BaseActivity() {
     private fun clearInputs() {
         categoryNameInput.text.clear()
         categoryLimitInput.text.clear()
+    }
+
+    private fun showLevelUpDialog(newLevel: Int) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_celebration, null)
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        val messageView = dialogView.findViewById<TextView>(R.id.dialogMessage)
+        val levelView = dialogView.findViewById<TextView>(R.id.dialogLevel)
+        val imageView = dialogView.findViewById<ImageView>(R.id.dialogImage)
+
+        messageView?.text = "\uD83C\uDF89 Level Up!"
+        levelView?.text = "You reached Level $newLevel"
+        imageView?.setImageResource(R.drawable.fluent_emoji_flat_trophy)
+
+        dialog.show()
     }
 
     private fun populateCategorySpinner() {

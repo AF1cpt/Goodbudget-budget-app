@@ -137,17 +137,18 @@ class AnalyticsActivity : BaseActivity() {
             setTextColor(android.graphics.Color.BLACK)
         }
 
+        // Receipt components
         val toggleTextView = TextView(context).apply {
             text = "Tap to view receipt"
             textSize = 13f
-            setTextColor(android.graphics.Color.DKGRAY)
+            setTextColor(android.graphics.Color.BLUE)
             visibility = View.GONE
         }
 
         val receiptImageView = ImageView(context).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                400
+                500
             ).apply {
                 setMargins(0, 12, 0, 0)
             }
@@ -155,11 +156,15 @@ class AnalyticsActivity : BaseActivity() {
             visibility = View.GONE
         }
 
-        if (!receiptUri.isNullOrEmpty()) {
+        // Load image from URI
+        if (!receiptUri.isNullOrBlank()) {
             try {
                 val imageUri = Uri.parse(receiptUri)
-                receiptImageView.setImageURI(imageUri)
-                toggleTextView.visibility = View.VISIBLE
+
+                // Try opening the URI
+                    receiptImageView.setImageURI(imageUri)
+                    toggleTextView.visibility = View.VISIBLE
+
 
                 toggleTextView.setOnClickListener {
                     val isVisible = receiptImageView.visibility == View.VISIBLE
@@ -169,8 +174,13 @@ class AnalyticsActivity : BaseActivity() {
 
             } catch (e: Exception) {
                 Log.e("AnalyticsActivity", "Invalid receipt URI: $receiptUri", e)
+                toggleTextView.visibility = View.VISIBLE
+                toggleTextView.text = "Receipt could not be loaded"
             }
+        } else {
+            toggleTextView.visibility = View.GONE
         }
+
 
         layout.addView(nameTextView)
         layout.addView(amountTextView)
@@ -180,6 +190,7 @@ class AnalyticsActivity : BaseActivity() {
 
         return layout
     }
+
 
     private fun drawCategoryBarChart(month: String) {
         val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
@@ -213,28 +224,34 @@ class AnalyticsActivity : BaseActivity() {
                     color = getColor(R.color.teal_200)
                 }
 
+                val groupSpace = 0.2f
+                val barSpace = 0.05f
+                val barWidth = 0.35f
+
+// Set bar widths before assigning to chart
                 val data = BarData(spentDataSet, limitDataSet)
-                data.barWidth = 0.4f
+                data.barWidth = barWidth
 
                 categoryBarChart.data = data
                 categoryBarChart.description.isEnabled = false
 
-                val groupSpace = 0.2f
-                val barSpace = 0.05f
-
-                categoryBarChart.xAxis.apply {
-                    valueFormatter = IndexAxisValueFormatter(labels)
-                    granularity = 1f
-                    position = XAxis.XAxisPosition.BOTTOM
-                    setDrawGridLines(false)
-                }
+                val xAxis = categoryBarChart.xAxis
+                xAxis.valueFormatter = IndexAxisValueFormatter(labels)
+                xAxis.granularity = 1f
+                xAxis.isGranularityEnabled = true
+                xAxis.position = XAxis.XAxisPosition.BOTTOM
+                xAxis.setCenterAxisLabels(true)
+                xAxis.setDrawGridLines(false)
+                xAxis.axisMinimum = 0f
+                xAxis.axisMaximum = 0f + data.getGroupWidth(groupSpace, barSpace) * categories.size
 
                 categoryBarChart.axisLeft.axisMinimum = 0f
                 categoryBarChart.axisRight.isEnabled = false
                 categoryBarChart.setVisibleXRangeMaximum(5f)
-                categoryBarChart.setFitBars(true)
+
                 categoryBarChart.groupBars(0f, groupSpace, barSpace)
                 categoryBarChart.invalidate()
+
             }
         }
     }

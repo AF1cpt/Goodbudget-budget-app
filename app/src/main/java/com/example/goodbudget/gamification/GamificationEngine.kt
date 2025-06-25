@@ -7,83 +7,93 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import com.jakewharton.threetenabp.AndroidThreeTen
 
+
+
 object GamificationEngine {
 
     private var userStats: UserStats = UserStats()
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-    // This should be called once from Application or MainActivity
     fun initialize(context: Context) {
         AndroidThreeTen.init(context)
         GamificationStorage.init(context)
-        userStats = GamificationStorage.getUserStats()
+        userStats = GamificationStorage.loadStats()
     }
 
-    fun awardXp(xp: Int): AwardResult {
-        val currentStats = GamificationStorage.getUserStats()
-        val newTotalXp = currentStats.xp + xp
-        val newLevel = newTotalXp / 100
+    fun getUserStats(): UserStats = userStats
 
-        val leveledUp = newLevel > currentStats.level
+    fun awardXp(xpToAdd: Int): AwardResult {
+        val previousLevel = userStats.level
+        val newTotalXp = userStats.xp + xpToAdd
+        val newLevel = (newTotalXp / 100).coerceAtLeast(1)
 
-        val updatedStats = currentStats.copy(xp = newTotalXp, level = newLevel)
-        GamificationStorage.saveUserStats(updatedStats)
+        userStats.xp = newTotalXp
+        userStats.level = newLevel
+
+        val newlyUnlockedBadges = mutableListOf<String>()
+
+        // 🥇 "Budget Beginner"
+        if (newTotalXp > 0 && !"Budget Beginner".inBadges()) {
+            userStats.badgesUnlocked.add("Budget Beginner")
+            newlyUnlockedBadges.add("Budget Beginner")
+        }
+
+        val leveledUp = newLevel > previousLevel
+        GamificationStorage.saveStats(userStats)
 
         return AwardResult(
             leveledUp = leveledUp,
             newLevel = newLevel,
-            newXp = newTotalXp
+            newXp = newTotalXp,
+            newBadges = newlyUnlockedBadges
         )
     }
 
-    fun checkInToday(): Reward? {
-        val today = LocalDate.now().format(dateFormatter)
-        if (userStats.lastCheckInDate != today) {
-            userStats.dailyCheckInStreak = if (wasYesterday(userStats.lastCheckInDate)) {
-                userStats.dailyCheckInStreak + 1
-            } else 1
-            userStats.lastCheckInDate = today
-            addXP(10)
-            return Reward.XP(10)
+    fun logExpense(): AwardResult {
+        val xpEarned = 10
+        val result = awardXp(xpEarned)
+
+        // 🧾 "First Spend"
+        if (!"First Spend".inBadges()) {
+            userStats.badgesUnlocked.add("First Spend")
+            result.newBadges.add("First Spend")
+            GamificationStorage.saveStats(userStats)
         }
-        return null
+
+        return result
     }
 
-    fun logExpense(): Reward? {
-        val today = LocalDate.now().format(dateFormatter)
-        if (userStats.lastExpenseLogDate != today) {
-            userStats.expenseLogStreak = if (wasYesterday(userStats.lastExpenseLogDate)) {
-                userStats.expenseLogStreak + 1
-            } else 1
-            userStats.lastExpenseLogDate = today
-            addXP(15)
-            return Reward.XP(15)
+    fun incrementReceiptCount(): AwardResult? {
+        return trackReceiptUpload()
+    }
+
+    private fun trackReceiptUpload(): AwardResult? {
+        userStats.receiptUploadCount += 1
+
+        var result: AwardResult? = null
+
+        if (userStats.receiptUploadCount >= 10 && !"Proof Keeper".inBadges()) {
+            userStats.badgesUnlocked.add("Proof Keeper")
+            result = AwardResult(
+                leveledUp = false,
+                newLevel = userStats.level,
+                newXp = userStats.xp,
+                newBadges = mutableListOf("Proof Keeper")
+            )
         }
-        return null
+
+        GamificationStorage.saveStats(userStats)
+        return result
     }
 
-    fun addSavings(amount: Double): Reward? {
-        userStats.totalSavings += amount
-        val rewardXp = (amount * 0.5).toInt()
-        addXP(rewardXp)
-        return Reward.XP(rewardXp)
-    }
-
-    private fun addXP(xp: Int) {
-        userStats.xp += xp
-        userStats.level = userStats.xp / 100
-        GamificationStorage.saveUserStats(userStats)
-    }
-
-    private fun wasYesterday(dateStr: String?): Boolean {
-        if (dateStr == null) return false
-        val yesterday = LocalDate.now().minusDays(1).format(dateFormatter)
-        return dateStr == yesterday
+    private fun String.inBadges(): Boolean {
+        return userStats.badgesUnlocked.contains(this)
     }
 
     data class AwardResult(
         val leveledUp: Boolean,
         val newLevel: Int,
-        val newXp: Int
+        val newXp: Int,
+        val newBadges: MutableList<String> = mutableListOf()
     )
 }
