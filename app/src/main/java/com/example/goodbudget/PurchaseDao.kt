@@ -16,4 +16,7 @@ interface PurchaseDao {
 
     @Query("SELECT * FROM purchases WHERE userEmail = :email")
     suspend fun getPurchasesByUser(email: String): List<Purchase>
+
+    @Query("SELECT * FROM purchases WHERE userEmail = :email AND date LIKE :month || '%'")
+    suspend fun getPurchasesByUserAndMonth(email: String, month: String): List<Purchase>
 }

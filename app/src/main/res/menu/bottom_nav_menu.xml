@@ -11,7 +11,7 @@
         android:title="Dashboard" />
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_analytics"
         android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="Coming Soon" />
+        android:title="Analytics" />
 </menu>

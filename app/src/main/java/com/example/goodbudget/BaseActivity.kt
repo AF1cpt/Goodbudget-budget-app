@@ -25,8 +25,11 @@ abstract class BaseActivity : AppCompatActivity() {
                     }
                     true
                 }
-                R.id.navigation_notifications -> {
-                    Toast.makeText(this, "Features coming soon", Toast.LENGTH_SHORT).show()
+                R.id.navigation_analytics -> {
+                    if (currentActivity != AnalyticsActivity::class.java) {
+                        startActivity(Intent(this, AnalyticsActivity::class.java))
+                        finish()
+                    }
                     true
                 }
                 else -> false

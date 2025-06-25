@@ -3,13 +3,10 @@ package com.example.goodbudget
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import com.example.goodbudget.gamification.GamificationEngine
-import com.example.goodbudget.gamification.GamificationStorage
 
 class MainActivity : BaseActivity() {
 
@@ -21,12 +18,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        GamificationEngine.initialize(applicationContext)
         setContentView(R.layout.activity_main)
-
-        // Initialize gamification
-        GamificationStorage.init(applicationContext)
-
         setupBottomNavigation(MainActivity::class.java)
 
         // Category Views
@@ -46,10 +38,12 @@ class MainActivity : BaseActivity() {
         }
 
         // Income Views
+        val incomeNameInput = findViewById<EditText>(R.id.incomeNameInput)
         val incomeAmountInput = findViewById<EditText>(R.id.incomeAmountInput)
         val addIncomeButton = findViewById<Button>(R.id.addIncomeButton)
 
         addIncomeButton.setOnClickListener {
+            val incomeName = incomeNameInput.text.toString()
             val amountText = incomeAmountInput.text.toString()
             val incomeAmount = amountText.toDoubleOrNull()
 
@@ -60,7 +54,9 @@ class MainActivity : BaseActivity() {
                     db.incomeDao().insertIncome(income)
                     runOnUiThread {
                         Toast.makeText(this@MainActivity, "Income added successfully!", Toast.LENGTH_SHORT).show()
+                        incomeNameInput.text.clear()
                         incomeAmountInput.text.clear()
+                        fetchBalance()
                     }
                 }
             } else {
@@ -69,29 +65,45 @@ class MainActivity : BaseActivity() {
         }
 
         // Purchase Views
+        val purchaseNameInput = findViewById<EditText>(R.id.purchaseNameInput)
         val purchaseAmountInput = findViewById<EditText>(R.id.purchaseAmountInput)
         val purchaseCategoryInput = findViewById<EditText>(R.id.purchaseCategoryNameInput)
+        val purchaseDateInput = findViewById<EditText>(R.id.purchaseDateInput)
         val spendIncomeButton = findViewById<Button>(R.id.spendIncomeButton)
 
         spendIncomeButton.setOnClickListener {
-            val amountText = purchaseAmountInput.text.toString()
-            val categoryText = purchaseCategoryInput.text.toString()
+            val purchaseName = purchaseNameInput.text.toString().trim()
+            val amountText = purchaseAmountInput.text.toString().trim()
+            val categoryText = purchaseCategoryInput.text.toString().trim()
+            val purchaseDate = purchaseDateInput.text.toString().trim() // yyyy-mm-dd format
             val purchaseAmount = amountText.toDoubleOrNull()
 
-            if (purchaseAmount != null && purchaseAmount > 0 && categoryText.isNotEmpty()) {
-                val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
+            if (purchaseAmount != null && purchaseAmount > 0 && categoryText.isNotEmpty() &&
+                purchaseName.isNotEmpty() && purchaseDate.matches(Regex("""\d{4}-\d{2}-\d{2}"""))
+            ) {
+                val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null) ?: ""
+
                 lifecycleScope.launch {
-                    val totalIncome = db.incomeDao().getTotalIncomeByUser(userEmail ?: "") ?: 0.0
-                    val totalDebt = db.purchaseDao().getTotalDebtByUser(userEmail ?: "") ?: 0.0
+                    val totalIncome = db.incomeDao().getTotalIncomeByUser(userEmail) ?: 0.0
+                    val totalDebt = db.purchaseDao().getTotalDebtByUser(userEmail) ?: 0.0
                     val availableBalance = totalIncome - totalDebt
 
                     if (purchaseAmount <= availableBalance) {
-                        val purchase = Purchase(amount = purchaseAmount, category = categoryText, userEmail = userEmail ?: "")
+                        val purchase = Purchase(
+                            name = purchaseName,
+                            amount = purchaseAmount,
+                            category = categoryText,
+                            date = purchaseDate,
+                            userEmail = userEmail
+                        )
                         db.purchaseDao().insertPurchase(purchase)
                         runOnUiThread {
                             Toast.makeText(this@MainActivity, "Purchase deducted successfully!", Toast.LENGTH_SHORT).show()
+                            purchaseNameInput.text.clear()
                             purchaseAmountInput.text.clear()
                             purchaseCategoryInput.text.clear()
+                            purchaseDateInput.text.clear()
+                            fetchBalance()
                         }
                     } else {
                         runOnUiThread {
@@ -100,7 +112,26 @@ class MainActivity : BaseActivity() {
                     }
                 }
             } else {
-                Toast.makeText(this, "Please enter valid purchase details", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter valid purchase details (Date format: yyyy-mm-dd)", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        fetchBalance()
+    }
+
+    private fun fetchBalance() {
+        val totalBalanceAmount = findViewById<TextView>(R.id.totalBalanceAmount)
+        val userEmail = getSharedPreferences("USER_PREF", MODE_PRIVATE).getString("email", null)
+
+        if (userEmail != null) {
+            lifecycleScope.launch {
+                val totalIncome = db.incomeDao().getTotalIncomeByUser(userEmail) ?: 0.0
+                val totalDebt = db.purchaseDao().getTotalDebtByUser(userEmail) ?: 0.0
+                val totalBalance = totalIncome - totalDebt
+
+                runOnUiThread {
+                    totalBalanceAmount.text = "R${"%.2f".format(totalBalance)}"
+                }
             }
         }
     }
@@ -111,17 +142,9 @@ class MainActivity : BaseActivity() {
 
         lifecycleScope.launch {
             db.categoryDao().insertCategory(category)
-
-            // Award XP for adding a category
-            val result = GamificationEngine.awardXp(30) // 30 XP
-
             runOnUiThread {
                 Toast.makeText(this@MainActivity, "Category Added!", Toast.LENGTH_SHORT).show()
                 clearInputs()
-
-                if (result.leveledUp) {
-                    showLevelUpDialog(result.newLevel)
-                }
             }
         }
     }
@@ -129,22 +152,5 @@ class MainActivity : BaseActivity() {
     private fun clearInputs() {
         categoryNameInput.text.clear()
         categoryLimitInput.text.clear()
-    }
-
-    private fun showLevelUpDialog(newLevel: Int) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_celebration, null)
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
-            .setView(dialogView)
-            .create()
-
-        val messageView = dialogView.findViewById<TextView>(R.id.dialogMessage)
-        val levelView = dialogView.findViewById<TextView>(R.id.dialogLevel)
-        val imageView = dialogView.findViewById<ImageView>(R.id.dialogImage)
-
-        messageView?.text = "🎉 Level Up!"
-        levelView?.text = "You reached Level $newLevel"
-        imageView?.setImageResource(R.drawable.fluent_emoji_flat_trophy)
-
-        dialog.show()
     }
 }
